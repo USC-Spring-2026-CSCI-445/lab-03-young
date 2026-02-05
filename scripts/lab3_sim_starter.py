@@ -51,6 +51,7 @@ class OdometryPublisher:
             self.theta += delta_th
 
             self.theta = math.atan2(math.sin(self.theta), math.cos(self.theta))
+        print(f"x: {self.x}, y: {self.y}, theta: {self.theta}")
         ######### Your code ends here #########
 
         odom_quat = tf.transformations.quaternion_from_euler(0, 0, self.theta)

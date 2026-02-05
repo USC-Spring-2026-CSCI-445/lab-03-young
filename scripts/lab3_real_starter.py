@@ -59,12 +59,18 @@ class OdometryPublisher:
         if dt > 0:
             delta_left_encoder = (self.left_encoder - self.last_left_encoder) * self.TICK_TO_RAD
             delta_right_encoder = (self.right_encoder - self.last_right_encoder) * self.TICK_TO_RAD
-            delta_s = (delta_left_encoder + delta_right_encoder) / 2
-            delta_theta = (delta_left_encoder - delta_right_encoder) / self.wheel_separation
-            self.x += delta_s * math.cos(self.theta)
-            self.y += delta_s * math.sin(self.theta)
+            self.last_left_encoder = self.left_encoder
+            self.last_right_encoder = self.right_encoder
+
+            d_left = delta_left_encoder * self.wheel_radius
+            d_right = delta_right_encoder * self.wheel_radius
+            delta_s = (d_left + d_right) / 2
+            delta_theta = (d_left - d_right) / self.wheel_separation
+            self.x += delta_s * math.cos(self.theta + delta_theta / 2)
+            self.y += delta_s * math.sin(self.theta + delta_theta / 2)
             self.theta += delta_theta
 
+        print(f"x: {self.x}, y: {self.y}, theta: {self.theta}")
         ######### Your code ends here #########
 
         odom_quat = tf.transformations.quaternion_from_euler(0, 0, self.theta)
